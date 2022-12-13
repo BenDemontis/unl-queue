@@ -54,23 +54,28 @@ class MyBot(commands.Bot):
                     #Start the bot new lobby creation process and pass back the control to the event loop controller.
                     #Why is this here? Wouldn't just calling self.queue.new_lobby() finish the process once the new lobby is made anyways and pass back control since the function is complete.
                     await self.queue.new_lobby()
-    
+
+    #When the bot is ready, start the background task, import the extension cogs, sync commands for the bot to discord.
     async def on_ready(self):
         self.background_task.start()
         for fn in os.listdir("./cogs"):
             if fn.endswith(".py"):
                 await bot.load_extension(f'cogs.{fn[:-3]}')
         await self.tree.sync(guild = discord.Object(int(os.getenv("SERVER_ID"))))
-
+#Instantiate bot
 bot = MyBot()
-
+#Upon a bot event (i.e. message)
 @bot.event
 async def on_message(message):
+    #If the message is in queue channel and not from the bot
     if message.channel.id == int(os.getenv("QUEUE")) and message.author.id != bot.user.id:
+        #Process the commands
         await bot.process_commands(message)
         try:
+            #Delete the processed message once complete
             await message.delete()
         except:
+            #If processing of the command failed, don't delete the message and do nothing.
             pass
-
+#Import the token for the bot.
 asyncio.run(bot.run(os.getenv("TOKEN")))
