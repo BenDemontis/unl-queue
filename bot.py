@@ -51,8 +51,7 @@ class MyBot(commands.Bot):
                     await channel.set_permissions(role, read_messages=True)
                     #Sets devmode to false for the actual bot
                     self.queue.devmode = False
-                    #Start the bot new lobby creation process and pass back the control to the event loop controller.
-                    #Why is this here? Wouldn't just calling self.queue.new_lobby() finish the process once the new lobby is made anyways and pass back control since the function is complete.
+                    #Must be awaited because new_lobby() is an asyncio coroutine function that must be called with await.
                     await self.queue.new_lobby()
 
     #When the bot is ready, start the background task, import the extension cogs, sync commands for the bot to discord.
