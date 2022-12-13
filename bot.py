@@ -51,7 +51,8 @@ class MyBot(commands.Bot):
                     await channel.set_permissions(role, read_messages=True)
                     #Sets devmode to false for the actual bot
                     self.queue.devmode = False
-                    #Start the bot new lobby creation process without halting the function of the bot.
+                    #Start the bot new lobby creation process and pass back the control to the event loop controller.
+                    #Why is this here? Wouldn't just calling self.queue.new_lobby() finish the process once the new lobby is made anyways and pass back control since the function is complete.
                     await self.queue.new_lobby()
     
     async def on_ready(self):
